@@ -1,4 +1,5 @@
-const { register, login } = require('../controllers/user');
+const { register, login, getUser } = require('../controllers/user');
+const { authenticate } = require('../middleware/auth');
 const { validateRegister, loginValidation } = require('../middleware/validate');
 
 const router = require('express').Router();
@@ -21,6 +22,7 @@ const router = require('express').Router();
  *               - name
  *               - email
  *               - password
+ *               - confirmPassword
  *             properties:
  *               name:
  *                 type: string
@@ -30,6 +32,10 @@ const router = require('express').Router();
  *                 format: email
  *                 example: johndoe@example.com
  *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: StrongPassword123
+ *               confirmPassword:
  *                 type: string
  *                 format: password
  *                 example: StrongPassword123
@@ -143,5 +149,54 @@ router.post('/register', validateRegister, register);
  *                   example: Invalid Credentials
  */
 router.post('/login', loginValidation, login);
+
+
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Get logged-in user profile
+ *     description: Returns the authenticated user's details
+ *     tags:
+ *       - User
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status:
+ *                   type: string
+ *                   example: successful
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64ff2b91e9c8a7d123456789
+ *                     name:
+ *                       type: string
+ *                       example: John Doe
+ *                     email:
+ *                       type: string
+ *                       example: johndoe@gmail.com
+ *                     role:
+ *                       type: string
+ *                       example: user
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get('/user', authenticate, getUser);
 
 module.exports = router;

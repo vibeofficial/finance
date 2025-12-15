@@ -3,7 +3,7 @@ const joi = require('joi');
 
 exports.validateRegister = (req, res, next) => {
   const schema = joi.object({
-    name: joi.string().min(3).trim().required().pattern(/^[A-Za-z]+$/).messages({
+    name: joi.string().min(3).trim().required().pattern(/^[A-Za-z]+(?:\s[A-Za-z]+)*$/).messages({
       'string.empty': 'Firstname is required',
       'string.min': 'Firstname must be at least 3 characters long',
       'string.pattern.base': 'Invalid characters for firstname'

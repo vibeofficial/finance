@@ -3,6 +3,7 @@ const catchAsync = require('../middleware/catchAsync');
 const appError = require('../utils/appError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const secret = process.env.SECRET;
 
 
 exports.register = catchAsync(async (req, res, next) => {
@@ -11,6 +12,7 @@ exports.register = catchAsync(async (req, res, next) => {
   if (existingUser) return next(new appError('User already exist', 400));
   const hashPassword = await bcrypt.hash(password, await bcrypt.genSalt(10));
   const user = new userModel({ name, email, password: hashPassword });
+  await user.save();
   res.status(201).json({
     success: true,
     status: 'successful',
@@ -25,8 +27,8 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user) return next(new appError('Invalid Credentials', 400));
   const correctPassword = await bcrypt.compare(password, user.password);
   if (!correctPassword) return next(new appError('Invalid Credentials', 400));
-  const accessToken = jwt.sign({ id: user._id }, secret, { expiresIn: '1d' });
-  const refreshToken = jwt.sign({ id: user._id }, secret, { expiresIn: '7d' });
+  const accessToken = jwt.sign({ id: user._id, role: user.role }, secret, { expiresIn: '1d' });
+  const refreshToken = jwt.sign({ id: user._id, role: user.role }, secret, { expiresIn: '7d' });
   const { createdAt, updatedAt, __v, ...data } = user.toObject();
   res.status(200).json({
     success: true,
@@ -35,5 +37,17 @@ exports.login = catchAsync(async (req, res, next) => {
     data,
     accessToken,
     refreshToken
+  })
+});
+
+
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) return next(new appError('User not found', 404));
+  const { createdAt, updatedAt, __v, ...data } = user.toObject();
+  res.status(200).json({
+    success: true,
+    status: 'successful',
+    data
   })
 });
