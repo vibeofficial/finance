@@ -4,24 +4,24 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Quicklah Customer Service Documentation",
+      title: "Finance Documentation",
       version: "1.0.0",
-      description: "Documentation for Quicklah, a food delivery platform",
+      description: "Documentation for Finance, a platform that helps manage your financial expenses",
       license: {
-        name: "BASE URL: https://quicklah-customer-service.onrender.com/api/v1",
+        name: "",
       },
       contact: {
         name: "Backend Repo",
-        url: "https://github.com/Quicklah/QUICKLAH_CUSTOMER_SERVICE.git",
+        url: "https://github.com/vibeofficial/finance.git",
       },
     },
     servers: [
       {
-        url: "https://quicklah-customer-service.onrender.com/api/v1",
+        url: "https://finance-81fc.onrender.com/api/v1",
         description: "Production server",
       },
       {
-        url: "http://localhost:4860/api/v1",
+        url: "http://localhost:7070/api/v1",
         description: "Development server",
       },
     ],
